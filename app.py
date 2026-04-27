@@ -1,20 +1,30 @@
 import streamlit as st
 import google.generativeai as genai
 
-st.title("YouTube AI चेक टूल")
+# Page Title
+st.title("YouTube AI वीडियो स्टूडियो")
 
-api_key = st.secrets.get("GEMINI_API_KEY")
-
-if not api_key:
-    st.error("Secrets में GEMINI_API_KEY नहीं मिली!")
-else:
+# API Key handling
+try:
+    api_key = st.secrets["GEMINI_API_KEY"]
     genai.configure(api_key=api_key)
-    
-    st.write("उपलब्ध मॉडल्स की जांच कर रहा हूँ...")
-    try:
-        # यहाँ हम देखते हैं कि आपके API Key के लिए कौन से मॉडल्स उपलब्ध हैं
-        for m in genai.list_models():
-            if 'generateContent' in m.supported_generation_methods:
-                st.write(f"- {m.name}")
-    except Exception as e:
-        st.error(f"API Key काम नहीं कर रही है: {e}")
+    # Aapki list mein uplabdh model: gemini-2.0-flash
+    model = genai.GenerativeModel('gemini-2.0-flash')
+except Exception as e:
+    st.error(f"Configuration Error: {e}")
+    st.stop()
+
+# Input
+topic = st.text_input("वीडियो का टॉपिक लिखें:")
+
+if st.button("स्क्रिप्ट जनरेट करें"):
+    if not topic:
+        st.warning("कृपया टॉपिक लिखें!")
+    else:
+        try:
+            with st.spinner('स्क्रिप्ट लिख रहा हूँ...'):
+                response = model.generate_content(f"YouTube के लिए {topic} पर एक बेहतरीन स्क्रिप्ट लिखें")
+                st.markdown(response.text)
+        except Exception as e:
+            st.error(f"एरर आ गया: {e}")
+            
