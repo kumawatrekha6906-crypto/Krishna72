@@ -3,14 +3,12 @@ import google.generativeai as genai
 
 st.title("YouTube AI वीडियो स्टूडियो")
 
-# API Key यहाँ मांगेंगे
-api_key = st.text_input("अपनी Google Gemini API Key डालें:", type="password")
+# अब कोड सीधे Streamlit के Secrets से Key उठा लेगा
+api_key = st.secrets["GEMINI_API_KEY"]
 topic = st.text_input("वीडियो का टॉपिक लिखें:")
 
 if st.button("स्क्रिप्ट जनरेट करें"):
-    if not api_key:
-        st.error("कृपया अपनी API Key डालें!")
-    elif not topic:
+    if not topic:
         st.warning("कृपया टॉपिक लिखें!")
     else:
         try:
